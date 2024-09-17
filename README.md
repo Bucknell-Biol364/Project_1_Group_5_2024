@@ -1,8 +1,12 @@
 # Project_1 R Tutorial
 
 ## Authors
+
 Shihab K. Nihan
 Beth Williams
+
+
+
 
 ## Target Audience
 
