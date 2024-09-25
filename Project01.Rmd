@@ -135,6 +135,92 @@ This package also makes these datasets available for use as an advanced [Anscomb
 
 ```{r}
 (esoph)
+write.csv(esoph, "Esoph.scancer.csv", row.names = FALSE)
+read.csv("Esoph.scancer.csv")
+#testing for normality in the data
+library(ggplot2)
+library(cowplot)
+a<-qplot(data=Esoph_scancer,
+         x=tobgp,
+         geom="histogram",
+         bins=8)
+
+b<-qplot(data=Esoph_scancer,
+         x=alcgp,
+         geom="histogram",
+         bins=8)
+plot_grid(a,b,ncol = 2)
+plot_grid(a,c,ncol = 2)
+
+c<-qplot(data=Esoph_scancer,
+         x=agegp,
+         geom="histogram",
+         bins=8)
+plot_grid(b,c,ncol = 2)
+```
+
+#Making a histogram of the orginal and log transformed data and making density plots of them
+```{r} 
+a<-qplot(data = Esoph_scancer,
+         x=tobgp,
+         geom = "histogram",
+         bins=8)
+b<-qplot(data = Esoph_scancer,
+         x=log(tobgp),
+         geom = "histogram",
+         bins=8)
+c<-qplot(data = Esoph_scancer,
+         x=tobgp,
+         geom = "density")
+d<-qplot(data = Esoph_scancer,
+         x=log(tobgp),
+         geom = "density")
+#Plot in a 2X2 grid
+
+plot_grid(a,b,c,d, ncol = 2, nrow = 2)
+
 
 ```
+
+```{r}
+a<-qplot(data = Esoph_scancer,
+         x=alcgp,
+         geom = "histogram",
+         bins=8)
+b<-qplot(data = Esoph_scancer,
+         x=log(alcgp),
+         geom = "histogram",
+         bins=8)
+c<-qplot(data = Esoph_scancer,
+         x=alcgp,
+         geom = "density")
+d<-qplot(data = Esoph_scancer,
+         x=log(alcgp),
+         geom = "density")
+#Plot in a 2X2 grid
+
+plot_grid(a,b,c,d, ncol = 2, nrow = 2)
+```
+
+#Normality Test: Shapiro test and fit distrubtions 
+```{r}
+shapiro.test(Esoph_scancer$alcgp)
+shapiro.test(Esoph_scancer$tobgp)
+```
+
+```{r}
+shapiro.test(log(Esoph_scancer$alcgp))
+shapiro.test(log(Esoph_scancer$tobgp))
+```
+
+#finding error distributions
+
+```{r}
+library(MASS)
+fit1<-fitdistr(Esoph_scancer$alcgp,"normal")
+fit2<-fitdistr(Esoph_scancer$alcgp,"lognormal")
+AIC(fit1,fit2)
+```
+
+
 
