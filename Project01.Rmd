@@ -140,23 +140,12 @@ read.csv("Esoph.scancer.csv")
 #testing for normality in the data
 library(ggplot2)
 library(cowplot)
-a<-qplot(data=Esoph_scancer,
-         x=tobgp,
-         geom="histogram",
-         bins=8)
+a <- ggplot(Esoph_scancer, aes(x=tobgp)) + geom_bar() + ggtitle("Tobacco Group")
+b <- ggplot(Esoph_scancer, aes(x=alcgp)) + geom_bar() + ggtitle("Alcohol Group")
+c <- ggplot(Esoph_scancer, aes(x=agegp)) + geom_bar() + ggtitle("Age Group")
 
-b<-qplot(data=Esoph_scancer,
-         x=alcgp,
-         geom="histogram",
-         bins=8)
-plot_grid(a,b,ncol = 2)
-plot_grid(a,c,ncol = 2)
-
-c<-qplot(data=Esoph_scancer,
-         x=agegp,
-         geom="histogram",
-         bins=8)
-plot_grid(b,c,ncol = 2)
+# Display the plots in a grid
+plot_grid(a, b, c, ncol = 3)
 ```
 
 #Making a histogram of the orginal and log transformed data and making density plots of them
@@ -221,6 +210,9 @@ fit1<-fitdistr(Esoph_scancer$alcgp,"normal")
 fit2<-fitdistr(Esoph_scancer$alcgp,"lognormal")
 AIC(fit1,fit2)
 ```
+
+###Data Visualization
+Data visualization is another important aspect of data analysis because it allows you to simplify the data in a way that is easily digestible but still keep the importance of the findings. Another important reason to visualize the data is that most times, you will be presenting your findings to other people. There's also a good chance that your audience isn't as familiar with looking at data like you are so visuals are the best way to showcase your work.
 
 
 
