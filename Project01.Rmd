@@ -70,7 +70,7 @@ b <- ggplot(Esoph_scancer, aes(x=alcgp)) + geom_bar() + ggtitle("Alcohol Group")
 c <- ggplot(Esoph_scancer, aes(x=agegp)) + geom_bar() + ggtitle("Age Group")
 
 # Display the plots in a grid
-plot_grid(a, b, c, ncol = 3)
+plot_grid(a, b, c, ncol = 2)
 ```
 
 
