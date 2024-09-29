@@ -112,28 +112,36 @@ d<-qplot(data = Esoph_scancer,
 plot_grid(a,b,c,d, ncol = 2, nrow = 2)
 ```
 
-#Normality Test: Shapiro test and fit distrubtions 
-```{r}
-shapiro.test(Esoph_scancer$alcgp)
-shapiro.test(Esoph_scancer$tobgp)
-```
-
-```{r}
-shapiro.test(log(Esoph_scancer$alcgp))
-shapiro.test(log(Esoph_scancer$tobgp))
-```
-
-#finding error distributions
-
-```{r}
-library(MASS)
-fit1<-fitdistr(Esoph_scancer$alcgp,"normal")
-fit2<-fitdistr(Esoph_scancer$alcgp,"lognormal")
-AIC(fit1,fit2)
-```
 
 ###Data Visualization
 Data visualization is another important aspect of data analysis because it allows you to simplify the data in a way that is easily digestible but still keep the importance of the findings. Another important reason to visualize the data is that most times, you will be presenting your findings to other people. There's also a good chance that your audience isn't as familiar with looking at data like you are so visuals are the best way to showcase your work.
 
+Depending on the type of variables you are using, the kind of plot you will want to use will be different. For example, if you are comparing a quantitative variable with a categorical one, the type of visuals you will wabt to use includes bar charts, boxplots, or pie charts. If you are comparing a quantitative variable to another quantitative variable, the type of graphs you will want to use includes a scatterplot or a line graph. Finally, in rare cases(such as this one) comparing two categorical variables you will want use a mosaic plot.
 
+Our data set only uses categorical variables so we will be using a mosaic plot along with some bar charts we used above.
 
+```{r - Data Visualization}
+require(stats)
+require(graphics) # for mosaicplot
+summary(esoph)
+## effects of alcohol, tobacco and interaction, age-adjusted
+model1 <- glm(cbind(ncases, ncontrols) ~ agegp + tobgp * alcgp,
+              data = esoph, family = binomial())
+anova(model1)
+## Try a linear effect of alcohol and tobacco
+model2 <- glm(cbind(ncases, ncontrols) ~ agegp + unclass(tobgp)
+                                         + unclass(alcgp),
+              data = esoph, family = binomial())
+summary(model2)
+## Re-arrange data for a mosaic plot
+ttt <- table(esoph$agegp, esoph$alcgp, esoph$tobgp)
+o <- with(esoph, order(tobgp, alcgp, agegp))
+ttt[ttt == 1] <- esoph$ncases[o]
+tt1 <- table(esoph$agegp, esoph$alcgp, esoph$tobgp)
+tt1[tt1 == 1] <- esoph$ncontrols[o]
+tt <- array(c(ttt, tt1), c(dim(ttt),2),
+            c(dimnames(ttt), list(c("Cancer", "control"))))
+mosaicplot(tt, main = "esoph data set", color = TRUE)
+```
+
+By making a mosaic plot we can see that there are more cancer cases in older age groups that consume bother tobacco and alcohol compared to the lower age group and the groups that consume either a very low amount of each substance or none at all. The ANOVA test we performed alongside it also tell us the signnificance of each of our groups.
