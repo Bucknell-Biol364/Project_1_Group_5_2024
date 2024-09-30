@@ -8,60 +8,110 @@ date: 14 Sep 2024
 
 ```{r Load Libraries, include=FALSE}
 # Load other packages here.
-if (!require("datasauRus")) install.packages("datasauRus"); library(datasauRus)
 if (!require("tidyverse")) install.packages("tidyverse"); library(tidyverse)
+if (!require("MASS")) install.packages("MASS"); library(MASS)
+if (!require("cowplot")) install.packages("cowplot"); library(cowplot)
+if (!require("multcomp")) install.packages("multcomp"); library(multcomp) # for more accurate p
+if (!require("emmeans")) install.packages("emmeans"); library(emmeans) # for more accurate p
+if (!require("conflicted")) install.packages("conflicted"); library(conflicted) # For dealing with conflicts
+conflict_prefer_all("dplyr", quiet = TRUE)
 ```
 
-This project will require you to develop a tutorial to teach Bucknell students how to use R for graphing and data analysis. 
 
-## Introduction
-
-Begin by introducing yourself to your group. 
-Then discuss the biggest challenge that you have faced during the first three weeks of this course.
-Determine if there are any common threads in these challenges and start to think about objectives for the tutorial.
-
-## Target Audience
-
-Discuss with your group the target audience for the tutorial. 
-Examples could be a new student in Biology 364/664, a student in one of the new core Biology classes (201, 202, 203, or 204), a student in another 300-level Biology course (not 364), or a new student in one of the Bucknell research groups. 
-
-Edit the README.md file in your group's repository to reflect your plan.
-
-## Objectives
-
-After deciding on the target audience for your tutorial determine 2 to 3 overall objectives for your tutorial (one per member of your group). 
-These should be high-level objectives that are important skills for your target audience.
-Check with Prof. Field to see if they are appropriate and then add them to your README.md file.
-
-Identify at least 2 goals within each objective and add them to your README.md file.
-These should be goals that someone who is working through the tutorial can self-asses.
-For example, "to demostrate that you can test a hypothesis using a statistical model, the student should use a T test, linear model, or other test and interpret the p value appropriately."
-
-## Grading
-
-Each group will be expected to complete the following tasks to earn 85% of the points available for this assignment (21/25).
-
-- Identify and obtain suitable dataset
-- Use a Github repository and version control to collaborate on the project
-  + Every member of the group should participate in editing the repo
-- Spend 4-6 hours preparing, coding, and testing tutorial
-  + Data exploration
-  + Data visualization
-  + Hypothesis testing
-- Present tutorial in class
-- Provide public archive suitable for sharing to students/faculty
+```{r}
+#Reading in the built in dataset from R
+(esoph)
+write.csv(esoph, "Esoph.scancer.csv", row.names = FALSE)
+Esoph_scancer <- read.csv("Esoph.scancer.csv")
+```
 
 
-```{r - Converting to factor}
+```{r}
+#Converting to factors
 Esoph_scancer$agegp<- as.factor(Esoph_scancer$agegp)
 Esoph_scancer$alcgp<- as.factor(Esoph_scancer$alcgp)
 Esoph_scancer$tobgp<- as.factor(Esoph_scancer$tobgp)
 ```
 
+Preliminary hypothesis testing:
+###Creating a hypothesis:
+When creating a hypothesis, it is important to not look at the results first as this could lead to “harking” or formulating a “hypothesis after the results are known.” When first looking at our dataset (“esoph” from the built-in R datasets, holds data for the age of subjects, alcohol intake, tobacco intake, number of esophageal cancer cases, and number of controls), we looked at the variables without checking for normality of the data or graphing/testing our results. There were three variables that stood out to us: alcohol intake, tobacco intake, and number of esophageal cancer cases. This led us to formulating the following hypothesis:
+
+Groups that smoke/drink more may have a higher risk of developing esophageal cancer. The number of cases may also increase with age. 
+
+Variables:
+Tobacco per day (g) - ordinal, categorical
+Alcohol per day (g) - ordinal, categorical
+Age (grouped into ranges of age) - ordinal, categorical
+Number of cases (numerical values that can be counted) - discrete, quantitative
+
+As a first look for comparisons, we can calculate the mean of each of the groups individually to determine which groups had the highest number of cases. This can be done using the following function:
+
 ```{r}
-(esoph)
-write.csv(esoph, "Esoph.scancer.csv", row.names = FALSE)
-Esoph_scancer <- read.csv("Esoph.scancer.csv")
+#Finding the mean number of cases for each individual group without looking into other variables
+mean_age_group <- Esoph_scancer |> 
+  group_by(agegp) |> 
+  summarize(mean_value = mean(ncases, na.rm = TRUE))
+mean_age_group
+
+mean_alc_group <- Esoph_scancer |> 
+  group_by(alcgp) |> 
+  summarize(mean_value = mean(ncases, na.rm = TRUE))
+mean_alc_group
+
+mean_tob_group <- Esoph_scancer |> 
+  group_by(tobgp) |> 
+  summarize(mean_value = mean(ncases, na.rm = TRUE))
+mean_tob_group
+
+```
+
+The following can be done to order the ranking by number of cases just to see which groups had the highest number of cases and which groups had the lowest number of cases.
+
+```{r}
+ranking <- Esoph_scancer |>
+  arrange(desc(ncases), .by_group = TRUE) 
+ranking
+```
+```{r}
+head(ranking)
+tail(ranking)
+```
+The above functions and results give us a first look into each variable or group separately, however, this doesn’t take into account all of the factors together, so the results of this would not be reliable enough to make any conclusions. 
+
+###Creating a linear model:
+
+```{r}
+lm1<-lm(ncases ~ agegp * (alcgp + tobgp), data=Esoph_scancer) 
+summary(lm1)
+```
+The overall p-value for this linear model is extremely small, showing that there is a significant relationship between each of the variables on number of cases. 
+
+In order to use a linear model, there are a few assumptions that must be followed relating to the residuals. These include the following:
+1) Independence of data points
+2) Normally distributed residuals
+3) Homoscedastic data
+
+```{r}
+install.packages(lmtest); library(lmtest)
+dwtest(lm1)
+```
+
+```{r}
+hist(lm1$residuals)
+```
+```{r}
+plot(lm1)
+```
+
+```{r}
+anova(lm1)
+```
+This linear model yields many results as it shows the significance of each group (tobacco and alcohol intake). It shows that the results are significant for all of the groups except for age group correlated with tobacco group. 
+
+######
+
+```{r}
 #testing for normality in the data
 library(ggplot2)
 library(cowplot)
