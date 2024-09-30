@@ -142,27 +142,6 @@ d <- ggplot(Esoph_scancer, aes(x=log(ncases))) + geom_density() + ggtitle("Densi
 plot_grid(a, b, c, d, ncol = 2, nrow = 2)
 ```
 
-```{r}
-a<-qplot(data = Esoph_scancer,
-         x=alcgp,
-         geom = "histogram",
-         bins=8)
-b<-qplot(data = Esoph_scancer,
-         x=log(alcgp),
-         geom = "histogram",
-         bins=8)
-c<-qplot(data = Esoph_scancer,
-         x=alcgp,
-         geom = "density")
-d<-qplot(data = Esoph_scancer,
-         x=log(alcgp),
-         geom = "density")
-#Plot in a 2X2 grid
-
-plot_grid(a,b,c,d, ncol = 2, nrow = 2)
-```
-
-
 ###Data Visualization
 Data visualization is another important aspect of data analysis because it allows you to simplify the data in a way that is easily digestible but still keep the importance of the findings. Another important reason to visualize the data is that most times, you will be presenting your findings to other people. There's also a good chance that your audience isn't as familiar with looking at data like you are so visuals are the best way to showcase your work.
 
