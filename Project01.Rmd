@@ -61,7 +61,7 @@ Esoph_scancer$tobgp<- as.factor(Esoph_scancer$tobgp)
 ```{r}
 (esoph)
 write.csv(esoph, "Esoph.scancer.csv", row.names = FALSE)
-read.csv("Esoph.scancer.csv")
+Esoph_scancer <- read.csv("Esoph.scancer.csv")
 #testing for normality in the data
 library(ggplot2)
 library(cowplot)
