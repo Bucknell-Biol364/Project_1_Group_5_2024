@@ -2,7 +2,7 @@
 title: "Group Project 1"
 subtitle: "Biology 368/664 Bucknell University"
 output: pdf_document
-authors: Prof. Ken Field
+authors: Shihab, Amma, & Beth
 date: 14 Sep 2024
 ---
 
