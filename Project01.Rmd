@@ -27,7 +27,7 @@ Esoph_scancer <- read.csv("Esoph.scancer.csv")
 ```
 
 
-```{r-converting to factors}
+```{r - converting to factors}
 
 Esoph_scancer$agegp<- as.factor(Esoph_scancer$agegp)
 Esoph_scancer$alcgp<- as.factor(Esoph_scancer$alcgp)
@@ -48,7 +48,7 @@ Number of cases (numerical values that can be counted) - discrete, quantitative
 
 As a first look for comparisons, we can calculate the mean of each of the groups individually to determine which groups had the highest number of cases. This can be done using the following function:
 
-```{r-Finding the mean number of cases for each individual group without looking into other variables}
+```{r - Finding the mean number of cases for each individual group without looking into other variables}
 mean_age_group <- Esoph_scancer |> 
   group_by(agegp) |> 
   summarize(mean_value = mean(ncases, na.rm = TRUE))
@@ -68,7 +68,7 @@ mean_tob_group
 
 The following can be done to order the ranking by number of cases just to see which groups had the highest number of cases and which groups had the lowest number of cases. We can see the first and last ten rows in the ordered dataset by using the "head" and "tail" functions.
 
-```{r-ranking}
+```{r - ranking}
 ranking <- Esoph_scancer |>
   arrange(desc(ncases), .by_group = TRUE) 
 ranking
@@ -83,7 +83,7 @@ The above functions and results give us a first look into each variable or group
 
 Creating a linear model is valuable for analyzing this data because it allows us to look into each of the explanatory variables separately and at each of the variables' interactions with the others. 
 
-```{r-linear model}
+```{r - linear model}
 lm1<-lm(ncases ~ agegp * (alcgp + tobgp), data=Esoph_scancer) 
 summary(lm1)
 ```
@@ -96,13 +96,13 @@ In order to use a linear model, there are a few assumptions that must be followe
 
 The following test (the Durbin-Watson test) can be used to determine autocorrelation (independence of data points).
 
-```{r-dwtest}
+```{r - dwtest}
 dwtest(lm1)
 ```
 The results of this show a high p-value of 0.6399, and this means that we fail to reject the null hypothesis (which was that there is positive autocorrelation in the residuals). The Durbin-Watson statistic is also close enough to the ideal value of 2. Due to these results, we can conclude that the data points are independent enough to proceed with a linear model. 
 
 Creating a histogram can be done to determine if the residuals are normally distributed.
-```{r-histogram residuals}
+```{r - histogram residuals}
 hist(lm1$residuals, 
      main = "Histogram of Residuals for Linear Model",  
      xlab = "Residuals", 
@@ -113,18 +113,18 @@ This histogram shows that the residuals are normally distributed enough for crea
 
 We can determine homoscedasticity by plotting the linear model and assessing the qqplot created. 
 
-```{r-plot}
+```{r - plot}
 plot(lm1)
 ```
 Since the points mainly lie along the line of the qqplot, this tells us that it is homoscedastic. Due to all of the assumptions being met, we can consider a linear model an effective analysis. 
 
 An anova test can be conducted on the linear model to determine the statistical significance of each group.
-```{r-anova}
+```{r - anova}
 anova(lm1)
 ```
 This anova tests yields many results as it shows the significance of each group (tobacco and alcohol intake). It shows that the results are significant for all of the groups except for age group correlated with tobacco group. 
 
-```{r-testing for normality in the data}
+```{r - testing for normality in the data}
 library(ggplot2)
 library(cowplot)
 a <- ggplot(Esoph_scancer, aes(x=tobgp)) + geom_bar() + ggtitle("Tobacco Group")
@@ -137,7 +137,7 @@ plot_grid(a, b, c, ncol = 2)
 
 
 #Making a histogram of the orginal and log transformed data and making density plots of them
-```{r-graphing}
+```{r - graphing}
 # Create bar plots for discrete variables
 a <- ggplot(Esoph_scancer, aes(x=tobgp)) + geom_bar() + ggtitle("Tobacco Group - Bar Plot")
 b <- ggplot(Esoph_scancer, aes(x=alcgp)) + geom_bar() + ggtitle("Alcohol Group - Bar Plot")
