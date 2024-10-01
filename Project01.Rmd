@@ -37,7 +37,7 @@ Preliminary hypothesis testing:
 ###Creating a hypothesis:
 When creating a hypothesis, it is important to not look at the results first as this could lead to “harking” or formulating a “hypothesis after the results are known.” When first looking at our dataset (“esoph” from the built-in R datasets, holds data for the age of subjects, alcohol intake, tobacco intake, number of esophageal cancer cases, and number of controls), we looked at the variables without checking for normality of the data or graphing/testing our results. There were three variables that stood out to us: alcohol intake, tobacco intake, and number of esophageal cancer cases. This led us to formulating the following hypothesis:
 
-Groups that smoke/drink more may have a higher risk of developing esophageal cancer. The number of cases may also increase with age. 
+Groups that smoke/drink more may have a higher risk of developing cancer. The number of cases may also increase with age. 
 
 Variables:
 Tobacco per day (g) - ordinal, categorical
@@ -66,7 +66,7 @@ mean_tob_group
 
 ```
 
-The following can be done to order the ranking by number of cases just to see which groups had the highest number of cases and which groups had the lowest number of cases.
+The following can be done to order the ranking by number of cases just to see which groups had the highest number of cases and which groups had the lowest number of cases. We can see the first and last ten rows in the ordered dataset by using the "head" and "tail" functions.
 
 ```{r}
 ranking <- Esoph_scancer |>
@@ -81,35 +81,49 @@ The above functions and results give us a first look into each variable or group
 
 ###Creating a linear model:
 
+Creating a linear model is valuable for analyzing this data because it allows us to look into each of the explanatory variables separately and at each of the variables' interactions with the others. 
+
 ```{r}
 lm1<-lm(ncases ~ agegp * (alcgp + tobgp), data=Esoph_scancer) 
 summary(lm1)
 ```
-The overall p-value for this linear model is extremely small, showing that there is a significant relationship between each of the variables on number of cases. 
+The overall p-value for this linear model is extremely small. Smaller p-values indicate that the relationship between variables is statistically significant, and therefore this shows that there is a significant relationship between each of the variables on number of cases. 
 
 In order to use a linear model, there are a few assumptions that must be followed relating to the residuals. These include the following:
 1) Independence of data points
 2) Normally distributed residuals
 3) Homoscedastic data
 
-```{r}
-install.packages(lmtest); library(lmtest)
-dwtest(lm1)
-```
+The following test (the Durbin-Watson test) can be used to determine autocorrelation (independence of data points).
 
 ```{r}
-hist(lm1$residuals)
+install.packages("lmtest"); library(lmtest)
+dwtest(lm1)
 ```
+The results of this show a high p-value of 0.6399, and this means that we fail to reject the null hypothesis (which was that there is positive autocorrelation in the residuals). The Durbin-Watson statistic is also close enough to the ideal value of 2. Due to these results, we can conclude that the data points are independent enough to proceed with a linear model. 
+
+Creating a histogram can be done to determine if the residuals are normally distributed.
+```{r}
+hist(lm1$residuals, 
+     main = "Histogram of Residuals for Linear Model",  
+     xlab = "Residuals", 
+     col = "gray", 
+     border = "black")
+```
+This histogram shows that the residuals are normally distributed enough for creating linear models.
+
+We can determine homoscedasticity by plotting the linear model and assessing the qqplot created. 
+
 ```{r}
 plot(lm1)
 ```
+Since the points mainly lie along the line of the qqplot, this tells us that it is homoscedastic. Due to all of the assumptions being met, we can consider a linear model an effective analysis. 
 
+An anova test can be conducted on the linear model to determine the statistical significance of each group.
 ```{r}
 anova(lm1)
 ```
-This linear model yields many results as it shows the significance of each group (tobacco and alcohol intake). It shows that the results are significant for all of the groups except for age group correlated with tobacco group. 
-
-######
+This anova tests yields many results as it shows the significance of each group (tobacco and alcohol intake). It shows that the results are significant for all of the groups except for age group correlated with tobacco group. 
 
 ```{r}
 #testing for normality in the data
