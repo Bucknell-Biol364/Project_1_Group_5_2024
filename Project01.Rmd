@@ -176,13 +176,20 @@ model2 <- glm(cbind(ncases, ncontrols) ~ agegp + unclass(tobgp)
 summary(model2)
 ## Re-arrange data for a mosaic plot
 ttt <- table(esoph$agegp, esoph$alcgp, esoph$tobgp)
+#Creates a table from our dataset esoph and counts the number of occurrences for each combination of age group, alcohol consumption group, and tobacco consumption group.
 o <- with(esoph, order(tobgp, alcgp, agegp))
+#This creates an ordered index based on the values of each group. The order() function returns the indices of the elements sorted by the values of the specified columns
 ttt[ttt == 1] <- esoph$ncases[o]
+#This line replaces all the 1s in the table with the corresponding values of ncases
 tt1 <- table(esoph$agegp, esoph$alcgp, esoph$tobgp)
+#A new table is created
 tt1[tt1 == 1] <- esoph$ncontrols[o]
+#This line replaces all the 1s in the table table with the corresponding values of ncontrols
 tt <- array(c(ttt, tt1), c(dim(ttt),2),
             c(dimnames(ttt), list(c("Cancer", "control"))))
+#An array is created by combining ttt (cancer cases) and tt1 (controls) into a 3D array.
 mosaicplot(tt, main = "esoph data set", color = TRUE)
+#This generates a mosaic plot based on the 3D array tt, displaying the relationships between age group, alcohol consumption, tobacco consumption, and cancer/control status.
 ```
 
 By making a mosaic plot we can see that there are more cancer cases in older age groups that consume bother tobacco and alcohol compared to the lower age group and the groups that consume either a very low amount of each substance or none at all. The ANOVA test we performed alongside it also tell us the signnificance of each of our groups.
