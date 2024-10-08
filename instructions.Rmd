@@ -32,7 +32,7 @@ In order to achieve our objectives, we are going to import a built in dataset wi
 
 Below is the code used to load in the dataset, write it as a csv file (to be saved separately), and then name the dataset (using the read.csv function). Finally, the view function can be used to look into our data 
 
-```{r}
+```{r - X}
 #Reading in the built in dataset from R
 (esoph)
 
@@ -43,7 +43,7 @@ write.csv(esoph, "Esoph.scancer.csv", row.names = FALSE)
 Esoph_scancer <- read.csv("Esoph.scancer.csv")
 
 #Viewing the Esoph_scancer file to see if there are any problems in the data
-View(Esoph_scancer)
+view(Esoph_scancer)
 ```
 
 When viewing the dataset, we can see that some cells within the alcohol per day column (alcgp) and the tobacco per day column (tobgp) include "g/day." This should be removed in order to make our data tidier and more uniform. The following function "gsub" can be used to designate what we'd like to replace (0-39g/day and 0-9g/day, respectively) and what we'd like to replace it with (0-39 and 0-9, respectively). 
@@ -204,6 +204,29 @@ c <- ggplot(Esoph_scancer, aes(x=agegp)) + geom_bar() + ggtitle("Age Group")
 plot_grid(a, b, c, ncol = 2)
 ```
 
+This R code is using ggplot2 library for data visualization. It creates bar and density plots for both discrete and continuous variables from the dataset we picked, “ Esoph_scancer”.
+
+Before running this code, make sure the ggplot2 library is loaded. You can do this with: library(ggplot2)
+
+The first part of the code creates two bar plots for the discrete variables tobgp and alcgp 
+aes(x=tobgp) and aes(x=alcgp) specify the aesthetics for the x-axis, mapping to the categorical variables tobgp and alcgp.
+geom_bar() tells ggplot2 to create bar plots, which count the frequency of each category.
+ggtitle() adds a title to each plot.
+Esoph_scancer is the dataset, and tobgp is the discrete variable (Tobacco Group).
+geom_bar() generates a bar plot based on the count of each tobgp category.
+ggtitle() adds the title "Tobacco Group - Bar Plot".
+alcgp is the discrete variable (Alcohol Group) plotted on the x-axis.
+ A density plot visualizes the distrubution of a continous variables.
+aes(x=ncases) maps ncases (continuous variable) to the x-axis.
+geom_density() creates a smooth curve representing the distribution of ncases.
+This plot shows the density distribution of the ncases variable directly
+
+This plot shows the distribution of ncases after applying a logarithmic transformation (log(ncases): usually done to make highly skewed data more normal or easier to interpret 
+
+The plot_grid() function arranges the four plots (two bar plots and two density plots) in a 2x2 grid layout
+ncol = 2 specifies 2 columns, and nrow = 2 specifies 2 rows. This creates a 2x2 grid of the plots.
+All four plots are arranged in a 2x2 grid for easy comparison.
+
 
 #Making a histogram of the orginal and log transformed data and making density plots of them
 ```{r - graphing}
@@ -261,5 +284,6 @@ mosaicplot(tt, main = "esoph data set", color = TRUE)
 #This generates a mosaic plot based on the 3D array tt, displaying the relationships between age group, alcohol consumption, tobacco consumption, and cancer/control status.
 ```
 ```
-
 By making a mosaic plot we can see that there are more cancer cases in older age groups that consume bother tobacco and alcohol compared to the lower age group and the groups that consume either a very low amount of each substance or none at all. The ANOVA test we performed alongside it also tell us the signnificance of each of our groups.
+
+Thank you for following along with the tutorial! We hope this provides you a batter understanding of how to use R to perform your data analysis.
